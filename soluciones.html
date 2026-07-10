@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Resolución paso a paso — Matemática Discreta</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root{ --bg:#f4f1ea; --surface:#fffdf8; --surface-2:#f7f4ec; --ink:#23201b; --ink-soft:#6b6457; --line:#e2dccf; --accent:#6d5dfc; --accent-soft:#efecff; --green:#2f9e6f; --green-soft:#e3f5ec; --amber:#d98a2b; }
+    @media (prefers-color-scheme: dark){ :root{ --bg:#16151b; --surface:#211f29; --surface-2:#2a2834; --ink:#ece9f3; --ink-soft:#9c97ad; --line:#332f3f; --accent:#9486ff; --accent-soft:#2a2640; --green:#4fc99a; --green-soft:#1e3a2f; --amber:#e0a955; } }
+    *{ box-sizing:border-box; margin:0; padding:0; }
+    body{ font-family:'Inter',system-ui,sans-serif; background:var(--bg); color:var(--ink); line-height:1.6; padding:40px 20px 80px; }
+    .wrap{ max-width:760px; margin:0 auto; }
+    h1,h2,h3{ font-family:'Fraunces',Georgia,serif; }
+    .badge{ display:inline-block; font-size:.7rem; text-transform:uppercase; letter-spacing:.06em; color:var(--accent); font-weight:700; background:var(--accent-soft); padding:4px 10px; border-radius:20px; margin-bottom:12px; }
+    h1{ font-size:1.7rem; line-height:1.2; margin-bottom:6px; }
+    .sub{ color:var(--ink-soft); font-size:.9rem; margin-bottom:24px; }
+    .box{ background:var(--surface); border:1px solid var(--line); border-radius:14px; padding:20px 22px; margin-bottom:18px; box-shadow:0 1px 2px rgba(40,33,20,.05),0 8px 24px rgba(40,33,20,.05); }
+    .box-label{ font-size:.68rem; text-transform:uppercase; letter-spacing:.08em; color:var(--accent); font-weight:700; margin-bottom:10px; }
+    .enunciado{ font-size:1rem; }
+    .idea{ background:var(--accent-soft); border:none; }
+    .pasos{ counter-reset:paso; list-style:none; }
+    .pasos li{ counter-increment:paso; position:relative; padding:12px 0 12px 46px; border-bottom:1px dashed var(--line); }
+    .pasos li:last-child{ border-bottom:none; }
+    .pasos li::before{ content:counter(paso); position:absolute; left:0; top:10px; width:30px; height:30px; background:var(--accent); color:#fff; border-radius:50%; display:grid; place-items:center; font-weight:700; font-size:.85rem; font-family:'Fraunces',serif; }
+    .resultado{ background:var(--green-soft); border:1px solid var(--green); color:var(--green); border-radius:12px; padding:14px 18px; font-size:1.05rem; font-weight:600; }
+    .verificar{ font-size:.88rem; color:var(--ink-soft); }
+    code, .fml{ font-family:'SF Mono',ui-monospace,monospace; background:var(--surface-2); padding:1px 6px; border-radius:5px; font-size:.9em; }
+    .pasos code{ font-size:.95em; }
+    b,strong{ font-weight:700; }
+    a{ color:var(--accent); }
+    .topbar{ max-width:760px; margin:0 auto 20px; display:flex; justify-content:space-between; align-items:center; font-size:.85rem; }
+    .print-btn{ background:var(--surface); border:1px solid var(--line); color:var(--ink-soft); padding:6px 12px; border-radius:8px; cursor:pointer; font-family:inherit; font-size:.8rem; }
+    .idx-item{ display:block; background:var(--surface); border:1px solid var(--line); border-radius:10px; padding:12px 16px; margin-bottom:8px; text-decoration:none; color:var(--ink); }
+    .idx-item:hover{ border-color:var(--accent); }
+    .idx-item small{ color:var(--ink-soft); }
+    .idx-h{ font-size:1.05rem; margin:22px 0 10px; }
+    .missing{ color:var(--amber); }
+    .sol-search{ width:100%; padding:11px 14px; border:1px solid var(--line); border-radius:10px; font-family:inherit; font-size:.95rem; background:var(--surface); color:var(--ink); margin-bottom:14px; }
+    .sol-search:focus{ outline:none; border-color:var(--accent); }
+    .sol-nav{ display:flex; flex-wrap:wrap; gap:6px; margin-bottom:20px; position:sticky; top:0; background:var(--bg); padding:10px 0; z-index:5; }
+    .sol-nav a{ font-size:.76rem; background:var(--surface-2); border:1px solid var(--line); padding:5px 11px; border-radius:20px; text-decoration:none; color:var(--ink-soft); }
+    .sol-nav a:hover{ border-color:var(--accent); color:var(--accent); }
+    .sol-unit{ font-size:.72rem; text-transform:uppercase; letter-spacing:.08em; color:var(--accent); font-weight:700; margin:28px 0 4px; padding-top:6px; border-top:1px solid var(--line); }
+    .sol-guide{ font-size:1.15rem; margin:14px 0 8px; scroll-margin-top:64px; }
+    .sol-count{ font-size:.8rem; color:var(--ink-soft); font-weight:400; }
+    @media print{ body{ background:#fff; padding:0; } .box{ box-shadow:none; break-inside:avoid; } .topbar{ display:none; } }
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <span id="crumb"></span>
+    <button class="print-btn" onclick="window.print()">🖨 Imprimir / PDF</button>
+  </div>
+  <div class="wrap" id="content"></div>
+
+  <script src="soluciones.js?v=17"></script>
+  <script>
+    function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+    // permitimos HTML controlado en los datos, así que NO escapamos el contenido de los pasos.
+    function qs(k){ return new URLSearchParams(location.search).get(k); }
+    function render(){
+      const id = qs('ej');
+      const content = document.getElementById('content');
+      const crumb = document.getElementById('crumb');
+      if(!id){ return renderIndex(); }
+      const s = (typeof SOLUCIONES!=='undefined') ? SOLUCIONES.find(x=>x.id===id) : null;
+      if(!s){ content.innerHTML = `<div class="box"><p class="missing">No encontré la resolución <code>${esc(id)}</code>.</p><p style="margin-top:10px"><a href="soluciones.html">Ver todas las resoluciones →</a></p></div>`; return; }
+      document.title = `${s.num} — ${s.titulo}`;
+      crumb.innerHTML = `<a href="soluciones.html">← Todas las resoluciones</a> · ${s.guia}`;
+      content.innerHTML = `
+        <span class="badge">${s.unidad} · ${s.guia} · ${s.num}</span>
+        <h1>${s.titulo}</h1>
+        <div class="box"><div class="box-label">📋 Enunciado</div><div class="enunciado">${s.enunciado}</div></div>
+        ${s.idea?`<div class="box idea"><div class="box-label">💡 Idea / cómo se reconoce</div><div>${s.idea}</div></div>`:''}
+        <div class="box"><div class="box-label">✏️ Resolución paso a paso</div><ol class="pasos">${s.pasos.map(p=>`<li>${p}</li>`).join('')}</ol></div>
+        <div class="resultado">✅ Resultado: ${s.resultado.includes('\n')?`<pre style="font-family:'SF Mono',ui-monospace,monospace;white-space:pre;margin-top:8px;font-weight:600;line-height:1.5;overflow-x:auto">${s.resultado}</pre>`:s.resultado}</div>
+        ${s.verificar?`<div class="box" style="margin-top:18px"><div class="box-label">🔎 Verificación / nota</div><div class="verificar">${s.verificar}</div></div>`:''}`;
+    }
+    function slug(g){ return 'g-'+g.normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^\w]+/g,'-').toLowerCase(); }
+    function idxItem(s){ return `<a class="idx-item" data-s="${(s.num+' '+s.titulo+' '+s.enunciado).toLowerCase().replace(/"/g,'')}" href="soluciones.html?ej=${s.id}"><strong>${s.num}</strong> — ${s.titulo} <small>· ${s.unidad}</small></a>`; }
+    function renderIndex(){
+      document.getElementById('crumb').textContent = 'Resoluciones paso a paso';
+      const content = document.getElementById('content');
+      if(typeof SOLUCIONES==='undefined' || !SOLUCIONES.length){ content.innerHTML='<div class="box">Todavía no hay resoluciones cargadas.</div>'; return; }
+      const isFinal = g => /^(Final|Modelo)/.test(g);
+      const GORDER = ['Combinatoria','Palomar','Lógica','PIM','Matrices','Sistemas','Aritmética','Programación lineal'];
+      const UNIT = {Combinatoria:'Unidad 1 · Combinatoria + Lógica',Palomar:'Unidad 1 · Combinatoria + Lógica','Lógica':'Unidad 1 · Combinatoria + Lógica',PIM:'Unidad 2 · Inducción (PIM)',Matrices:'Unidad 3 · Matrices y Sistemas',Sistemas:'Unidad 3 · Matrices y Sistemas','Aritmética':'Unidad 4 · Aritmética / Encriptación','Programación lineal':'Unidad 5 · Programación lineal'};
+      const byG = {}; SOLUCIONES.forEach(s=>{ (byG[s.guia]=byG[s.guia]||[]).push(s); });
+      const guides = GORDER.filter(g=>byG[g]);
+      const finals = Object.keys(byG).filter(isFinal);
+      // navegación
+      let nav = '<div class="sol-nav">' + guides.map(g=>`<a href="#${slug(g)}">${g}</a>`).join('') + `<a href="#finales" style="border-color:var(--accent);color:var(--accent)">📝 Finales (${finals.length})</a></div>`;
+      // guías por unidad
+      let html=''; let lastUnit='';
+      guides.forEach(g=>{
+        if(UNIT[g]!==lastUnit){ html+=`<div class="sol-unit">${UNIT[g]}</div>`; lastUnit=UNIT[g]; }
+        html+=`<h3 class="sol-guide" id="${slug(g)}">${g} <span class="sol-count">(${byG[g].length})</span></h3>` + byG[g].map(idxItem).join('');
+      });
+      // finales
+      html+=`<div class="sol-unit" id="finales">📝 Finales resueltos</div>`;
+      finals.forEach(g=>{ html+=`<h3 class="sol-guide" id="${slug(g)}">${g} <span class="sol-count">(${byG[g].length})</span></h3>` + byG[g].map(idxItem).join(''); });
+      content.innerHTML = `<span class="badge">Índice</span><h1>Resoluciones paso a paso <span class="sol-count">(${SOLUCIONES.length})</span></h1>`
+        + `<p class="sub">Segmentadas por unidad y guía, más los 9 finales resueltos. Cada una se abre también desde su ejercicio en el workspace.</p>`
+        + `<input class="sol-search" id="solSearch" placeholder="🔎 Buscar ejercicio por tema o número…">` + nav + html;
+      const inp=document.getElementById('solSearch');
+      inp.addEventListener('input',()=>{ const t=inp.value.toLowerCase().trim(); document.querySelectorAll('.idx-item').forEach(el=>{ el.style.display=(!t||el.dataset.s.includes(t))?'':'none'; }); document.querySelectorAll('.sol-guide,.sol-unit').forEach(h=>{ if(!t){h.style.display='';return;} let n=h.nextElementSibling, vis=false; while(n && !n.classList.contains('sol-guide') && !n.classList.contains('sol-unit')){ if(n.classList.contains('idx-item') && n.style.display!=='none') vis=true; n=n.nextElementSibling; } h.style.display=vis?'':'none'; }); });
+    }
+    render();
+  </script>
+</body>
+</html>

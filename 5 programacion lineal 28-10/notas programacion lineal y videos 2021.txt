@@ -1,0 +1,11 @@
+si es >= se pinta la recta, si es > se hace con linea punteada
+
+si el numero que se pasa dividiendo es negativo al otro lado de la ecuación, cambia el <= a >=
+
+en el libro hay muchos mas ejercicios que en el word
+
+grabaciones del 2021
+
+https://www.youtube.com/watch?v=pr7zmFRg0uI
+
+https://www.youtube.com/watch?v=xIIySgHPzLk

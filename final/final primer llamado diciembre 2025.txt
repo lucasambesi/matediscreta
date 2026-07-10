@@ -1,0 +1,6 @@
+1. Con 6 dígitos cuántos números de 4 cifras podemos formar sin repetir, con repetición. Cuántos de 3 cifras y cuantos de esos son múltiplos de 10
+2. Mediante PIM demostrar
+6+24+42+...(18n+12)=3n(3n+1)
+3.un enunciado de programación lineal
+4. Una ecuación a resolver con matriz
+5. Explicar en menos de 10 renglones la relación de la aritmética modular y los sistemas

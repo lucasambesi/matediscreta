@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#6d5dfc" />
+  <link rel="manifest" href="manifest.json" />
+  <title>Workspace — Final Matemática Discreta</title>
+  <link rel="stylesheet" href="styles.css?v=19" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="brand">
+      <div class="brand-mark">∑</div>
+      <div>
+        <h1>Matemática Discreta</h1>
+        <p>Workspace del final · UNLa</p>
+      </div>
+    </div>
+
+    <nav class="nav">
+      <button class="nav-btn active" data-view="dashboard"><span>◎</span> Panel</button>
+      <button class="nav-btn" data-view="roadmap"><span>🗺</span> Roadmap</button>
+      <button class="nav-btn" data-view="calendario"><span>📅</span> Calendario</button>
+      <button class="nav-btn" data-view="herramientas"><span>🧮</span> Herramientas</button>
+      <button class="nav-btn" data-view="practica"><span>🎯</span> Práctica</button>
+      <button class="nav-btn" data-view="formulas"><span>ƒ</span> Fórmulas</button>
+      <button class="nav-btn" data-view="glosario"><span>📖</span> Glosario</button>
+      <button class="nav-btn" data-view="videos"><span>🎥</span> Clases en video</button>
+      <button class="nav-btn" data-view="apuntes"><span>📄</span> Apuntes prácticos</button>
+      <button class="nav-btn" data-view="recursos"><span>▤</span> Recursos</button>
+      <button class="nav-btn" data-view="simulacros"><span>✎</span> Simulacros</button>
+      <button class="nav-btn" data-view="examen"><span>✓</span> Día del examen</button>
+    </nav>
+
+    <div class="sidebar-foot">
+      <div class="ring-wrap" title="Progreso total">
+        <svg viewBox="0 0 80 80" class="ring">
+          <circle class="ring-bg" cx="40" cy="40" r="34"></circle>
+          <circle class="ring-fg" id="ringFg" cx="40" cy="40" r="34"></circle>
+        </svg>
+        <div class="ring-label"><strong id="ringPct">0%</strong><span>completo</span></div>
+      </div>
+      <div class="io-row">
+        <button id="exportBtn" class="ghost-btn" title="Guardar tu progreso en un archivo">⤓ Exportar</button>
+        <button id="importBtn" class="ghost-btn" title="Cargar progreso desde un archivo">⤒ Importar</button>
+        <input type="file" id="importFile" accept="application/json" hidden />
+      </div>
+      <button id="themeBtn" class="ghost-btn theme-btn" title="Cambiar tema">🌙 Tema</button>
+    </div>
+  </aside>
+
+  <!-- MOBILE TOPBAR -->
+  <div class="topbar">
+    <button id="menuBtn" class="icon-btn" aria-label="Menú">☰</button>
+    <span>Matemática Discreta</span>
+    <button id="themeBtnM" class="icon-btn" aria-label="Tema">🌙</button>
+  </div>
+
+  <!-- MAIN -->
+  <main class="main" id="main">
+
+    <!-- backup reminder -->
+    <div id="backupBanner" class="banner" hidden>
+      ⚠️ Hace varios días que no respaldás tu progreso. <button id="bannerExport" class="link-btn">Exportar ahora</button>
+      <button id="bannerClose" class="banner-x" aria-label="Cerrar">×</button>
+    </div>
+
+    <!-- DASHBOARD -->
+    <section class="view active" id="view-dashboard">
+      <header class="view-head">
+        <h2>Panel de control</h2>
+        <p class="muted" id="todayStr"></p>
+      </header>
+
+      <div class="grid-cards">
+        <div class="card countdown">
+          <span class="card-tag">Cuenta regresiva</span>
+          <div class="count-num"><strong id="daysLeft">–</strong><small>días para cerrar el plan</small></div>
+          <p class="muted" id="examDateStr"></p>
+        </div>
+
+        <div class="card stat-mini">
+          <span class="card-tag">Tu ritmo</span>
+          <div class="mini-row"><span class="mini-ic">🔥</span><div><strong id="streakNum">0</strong><small>días de racha</small></div></div>
+          <div class="mini-row"><span class="mini-ic">⏱</span><div><strong id="totalTime">0 min</strong><small>estudiados en total</small></div></div>
+          <div class="mini-row"><span class="mini-ic">✅</span><div><strong id="exDone">0</strong><small>ejercicios hechos</small></div></div>
+        </div>
+
+        <div class="card pomo">
+          <span class="card-tag">Pomodoro</span>
+          <div class="pomo-time" id="pomoTime">25:00</div>
+          <div class="pomo-controls">
+            <button id="pomoStart" class="btn">▶ Iniciar</button>
+            <button id="pomoReset" class="ghost-btn" aria-label="Reiniciar">↺</button>
+          </div>
+          <div class="pomo-modes">
+            <button class="chip active" data-min="25" data-mode="Foco">Foco 25</button>
+            <button class="chip" data-min="5" data-mode="Pausa">Pausa 5</button>
+            <button class="chip" data-min="50" data-mode="Foco largo">Foco 50</button>
+          </div>
+          <p class="muted">Sesiones de foco hoy: <strong id="pomoCount">0</strong></p>
+        </div>
+      </div>
+
+      <div class="grid-cards">
+        <div class="card">
+          <span class="card-tag">Progreso por unidad</span>
+          <div id="unitBars"></div>
+        </div>
+        <div class="card">
+          <span class="card-tag">Confianza por tema <small class="muted">(clic para cambiar)</small></span>
+          <div id="confidence"></div>
+        </div>
+      </div>
+
+      <div class="card today-card">
+        <span class="card-tag">Tu sesión de hoy</span>
+        <div id="todayBlock"></div>
+      </div>
+    </section>
+
+    <!-- ROADMAP -->
+    <section class="view" id="view-roadmap">
+      <header class="view-head">
+        <h2>Roadmap de estudio</h2>
+        <p class="muted">Marcá cada ejercicio a medida que lo resolvés. Se guarda solo.</p>
+      </header>
+
+      <div class="toolbar">
+        <input type="search" id="roadSearch" class="search" placeholder="🔎 Buscar tema o ejercicio…" />
+        <div class="filters">
+          <button class="chip active" data-filter="all">Todos</button>
+          <button class="chip" data-filter="pending">Pendientes</button>
+          <button class="chip" data-filter="done">Hechos</button>
+        </div>
+        <button id="toggleAll" class="ghost-btn">Expandir todo</button>
+      </div>
+
+      <div class="reschedule-box">
+        <label>📅 Fecha del examen:
+          <input type="date" id="examDateInput" />
+        </label>
+        <button id="reschedBtn" class="ghost-btn" title="Mové los días pendientes desde mañana hasta el examen">↻ Me atrasé — re-agendar pendientes</button>
+        <button id="reschedReset" class="ghost-btn">Restaurar fechas originales</button>
+      </div>
+
+      <div id="roadmap"></div>
+    </section>
+
+    <!-- CALENDARIO -->
+    <section class="view" id="view-calendario">
+      <header class="view-head">
+        <h2>Calendario</h2>
+        <p class="muted">Tu mes de estudio de un vistazo. Clic en un día con sesión para abrirlo.</p>
+      </header>
+      <div class="cal-legend">
+        <span><i class="dot today"></i> Hoy</span>
+        <span><i class="dot done"></i> Completado</span>
+        <span><i class="dot pending"></i> Con sesión</span>
+        <span><i class="dot exam"></i> Examen</span>
+        <span><i class="dot free"></i> Comodín</span>
+      </div>
+      <div id="calendar"></div>
+    </section>
+
+    <!-- HERRAMIENTAS -->
+    <section class="view" id="view-herramientas">
+      <header class="view-head">
+        <h2>Herramientas de cálculo</h2>
+        <p class="muted">Para <strong>verificar</strong> tus resultados (en el examen se resuelve a mano).</p>
+      </header>
+
+      <div class="tool-grid">
+        <div class="card tool">
+          <span class="card-tag">🔢 Combinatoria (Ej. 1)</span>
+          <div class="tool-inputs">
+            <label>n <input type="number" id="cb-n" min="0" value="6"></label>
+            <label>k <input type="number" id="cb-k" min="0" value="3"></label>
+          </div>
+          <button class="btn" id="cb-go">Calcular</button>
+          <div class="tool-out" id="cb-out"></div>
+        </div>
+
+        <div class="card tool">
+          <span class="card-tag">➗ MCD / Euclides (Ej. 5)</span>
+          <div class="tool-inputs">
+            <label>a <input type="number" id="eu-a" min="1" value="146"></label>
+            <label>b <input type="number" id="eu-b" min="1" value="291"></label>
+          </div>
+          <button class="btn" id="eu-go">Calcular MCD</button>
+          <div class="tool-out" id="eu-out"></div>
+        </div>
+
+        <div class="card tool">
+          <span class="card-tag">φ de Euler / RSA (Ej. 5)</span>
+          <div class="tool-inputs">
+            <label>p <input type="number" id="phi-p" min="2" value="19"></label>
+            <label>q <input type="number" id="phi-q" min="2" value="7"></label>
+          </div>
+          <button class="btn" id="phi-go">Calcular φ(p·q)</button>
+          <div class="tool-out" id="phi-out"></div>
+          <p class="muted" style="margin-top:8px">¿φ de un solo número? <input type="number" id="phi-n" min="1" value="36" style="width:80px"> <button class="ghost-btn" id="phin-go">φ(n)</button></p>
+          <div class="tool-out" id="phin-out"></div>
+        </div>
+
+        <div class="card tool wide">
+          <span class="card-tag">▦ Matrices 3×3 (Ej. 4)</span>
+          <p class="muted">Matriz A:</p>
+          <div class="matrix-grid" id="mat-A"></div>
+          <p class="muted">Términos independientes b (para resolver A·x = b):</p>
+          <div class="vec-grid" id="mat-b"></div>
+          <div class="tool-btns">
+            <button class="btn" id="mat-det">Determinante</button>
+            <button class="btn" id="mat-inv">Inversa</button>
+            <button class="btn" id="mat-solve">Resolver sistema (Cramer)</button>
+          </div>
+          <div class="tool-out" id="mat-out"></div>
+        </div>
+
+        <div class="card tool wide">
+          <span class="card-tag">📈 Programación lineal (Ej. 3)</span>
+          <p class="muted">Función objetivo: Z = <input type="number" id="pl-p" value="3" style="width:60px"> x + <input type="number" id="pl-q" value="2" style="width:60px"> y &nbsp;
+            <select id="pl-opt"><option value="max">Maximizar</option><option value="min">Minimizar</option></select></p>
+          <p class="muted">Restricciones (una por línea, formato <code>a x + b y &lt;= c</code> · usá &lt;=, &gt;= o =):</p>
+          <textarea id="pl-cons" class="note-area" rows="5">1 x + 1 y <= 4
+1 x + 3 y <= 6
+x >= 0
+y >= 0</textarea>
+          <button class="btn" id="pl-go">Graficar y optimizar</button>
+          <div class="pl-wrap"><canvas id="pl-canvas" width="420" height="420"></canvas></div>
+          <div class="tool-out" id="pl-out"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PRACTICA -->
+    <section class="view" id="view-practica">
+      <header class="view-head">
+        <h2>Práctica activa</h2>
+        <p class="muted">Autoevaluación, flashcards, ejercicios resueltos y simulacro cronometrado.</p>
+      </header>
+
+      <div class="subtabs">
+        <button class="subtab active" data-sub="quiz">Quiz</button>
+        <button class="subtab" data-sub="flash">Flashcards</button>
+        <button class="subtab" data-sub="banco">Ejercicios resueltos</button>
+        <button class="subtab" data-sub="finales">Finales reales</button>
+        <button class="subtab" data-sub="sim">Modo simulacro</button>
+      </div>
+
+      <div class="subview active" id="sub-quiz">
+        <div id="quizUnits" class="quiz-units"></div>
+        <div id="quizArea"></div>
+      </div>
+
+      <div class="subview" id="sub-flash">
+        <div class="flash-head">
+          <select id="flashUnit"></select>
+          <span class="muted" id="flashProgress"></span>
+        </div>
+        <div class="flashcard" id="flashcard">
+          <div class="flash-inner">
+            <div class="flash-front" id="flashFront">Tocá "Empezar"</div>
+            <div class="flash-back" id="flashBack"></div>
+          </div>
+        </div>
+        <div class="flash-controls">
+          <button class="btn" id="flashFlip">Dar vuelta</button>
+          <button class="ghost-btn" id="flashNo">❌ No la sabía</button>
+          <button class="ghost-btn" id="flashYes">✅ La sabía</button>
+        </div>
+      </div>
+
+      <div class="subview" id="sub-banco">
+        <div id="banco"></div>
+      </div>
+
+      <div class="subview" id="sub-finales">
+        <p class="muted" style="margin-bottom:12px">9 finales reales transcriptos. Usalos como simulacros (en birome, ~2 h) o buscá ejercicios por tema.</p>
+        <input type="search" id="finSearch" class="search" placeholder="🔎 Buscar en los finales (ej: 'Euclides', 'inversa', 'palomar')…" style="margin-bottom:14px" />
+        <div id="finales"></div>
+      </div>
+
+      <div class="subview" id="sub-sim">
+        <div class="card">
+          <span class="card-tag">⏱ Simulacro cronometrado (~2 h)</span>
+          <div class="sim-timer" id="simTimer">2:00:00</div>
+          <div class="pomo-controls">
+            <button class="btn" id="simStart">▶ Iniciar simulacro</button>
+            <button class="ghost-btn" id="simReset">↺</button>
+          </div>
+          <p class="muted">Elegí un final de la sección <strong>Simulacros</strong> y resolvé los 5 ejercicios en birome. Marcá cada uno:</p>
+          <ul class="ex-list" id="simChecklist"></ul>
+          <p class="muted">Tu nota (0–10): <input type="number" id="simScore" min="0" max="10" step="0.5" style="width:70px"> <button class="ghost-btn" id="simSave">Guardar nota</button></p>
+          <div id="simHistory"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FORMULAS -->
+    <section class="view" id="view-formulas">
+      <header class="view-head">
+        <h2>Hoja de fórmulas</h2>
+        <p class="muted">Lo que tenés que saber de memoria. <button class="ghost-btn" onclick="window.print()">🖨 Imprimir</button></p>
+      </header>
+      <div id="formulas" class="formula-grid"></div>
+    </section>
+
+    <!-- GLOSARIO -->
+    <section class="view" id="view-glosario">
+      <header class="view-head">
+        <h2>Glosario</h2>
+        <p class="muted">Términos clave del final.</p>
+      </header>
+      <input type="search" id="gloSearch" class="search" placeholder="🔎 Buscar término…" />
+      <div id="glosario" class="glo-grid"></div>
+    </section>
+
+    <!-- VIDEOS / CLASES -->
+    <section class="view" id="view-videos">
+      <header class="view-head">
+        <h2>Clases en video — Prof. Loidi</h2>
+        <p class="muted">Análisis del contenido real de cada clase (a partir de los subtítulos del video). Tocá un video para ver el detalle.</p>
+      </header>
+      <input type="search" id="vidSearch" class="search" placeholder="🔎 Buscar tema en las clases…" style="margin-bottom:14px" />
+      <div id="videosList"></div>
+      <div id="videoDetail" hidden></div>
+    </section>
+
+    <!-- APUNTES PRÁCTICOS -->
+    <section class="view" id="view-apuntes">
+      <header class="view-head">
+        <h2>Apuntes de ejercicios prácticos</h2>
+        <p class="muted">Las guías de práctica de cada unidad: link al archivo original + transcripción a texto (buscable). Nota: algunas fórmulas o gráficos son imágenes y quedan solo en el archivo.</p>
+      </header>
+      <input type="search" id="apSearch" class="search" placeholder="🔎 Buscar en los apuntes (ej: 'palomar', 'inversa', 'φ', 'inecuación')…" style="margin-bottom:14px" />
+      <div id="apuntes"></div>
+    </section>
+
+    <!-- RECURSOS -->
+    <section class="view" id="view-recursos">
+      <header class="view-head">
+        <h2>Recursos</h2>
+        <p class="muted">Videos de la cátedra + refuerzo y tus apuntes por unidad.</p>
+      </header>
+      <div id="recursos"></div>
+    </section>
+
+    <!-- SIMULACROS -->
+    <section class="view" id="view-simulacros">
+      <header class="view-head">
+        <h2>Simulacros (finales reales)</h2>
+        <p class="muted">Hacelos completos, en birome y cronometrados (~2 h). Marcá los que rendiste y anotá tu nota.</p>
+      </header>
+      <div id="simulacros"></div>
+    </section>
+
+    <!-- EXAMEN -->
+    <section class="view" id="view-examen">
+      <header class="view-head">
+        <h2>Día del examen</h2>
+        <p class="muted">Repasá esto la noche anterior y el mismo día. <button class="ghost-btn" onclick="window.print()">🖨 Imprimir</button></p>
+      </header>
+      <div class="card">
+        <span class="card-tag">Formato del final</span>
+        <div id="examFormat"></div>
+      </div>
+      <div class="card">
+        <span class="card-tag">Checklist</span>
+        <ul class="checklist" id="examChecklist"></ul>
+      </div>
+    </section>
+
+  </main>
+
+  <button id="resetBtn" class="reset-btn" title="Reiniciar todo el progreso">Reiniciar progreso</button>
+
+  <!-- MODAL SESIÓN GUIADA -->
+  <div id="sessionModal" class="session-modal" hidden>
+    <div class="session-box">
+      <div class="session-head">
+        <div>
+          <div class="session-date" id="sessDate"></div>
+          <h2 id="sessTitle"></h2>
+        </div>
+        <div class="session-head-right">
+          <div class="sess-timer" id="sessTimer" title="Pomodoro">25:00</div>
+          <button class="icon-btn" id="sessClose" aria-label="Cerrar">✕</button>
+        </div>
+      </div>
+      <div class="session-progress"><div class="session-progress-fill" id="sessProgFill"></div></div>
+      <div class="session-steps" id="sessSteps"></div>
+      <div class="session-body" id="sessBody"></div>
+      <div class="session-nav">
+        <button class="ghost-btn" id="sessPrev">← Anterior</button>
+        <button class="btn" id="sessNext">Siguiente →</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="videos.js?v=19"></script>
+  <script src="apuntes.js?v=19"></script>
+  <script src="app.js?v=19"></script>
+</body>
+</html>

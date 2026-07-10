@@ -1,0 +1,11 @@
+ejercicio video 2 min 23.
+
+una distribuidora de alimentos realiza 2 tipos de mezclas. 
+
+la primera contiene un 50% de un alimento A y un 50% de un alimento B.
+
+la otra mezcla tiene 3 partes de A y una parte de B.
+
+Diariamente se abastece con 1000 kilogramos del alimento B y 1300 kilogramos del alimento A. 
+
+Si el beneficio por cada kilo de la primera mezcla es de 10 pesos y por cada kilo de la segunda es por 9 pesos. ¿Cuántos kilos de cada mezcla se debe fabricar para que el beneficio sea máximo?
